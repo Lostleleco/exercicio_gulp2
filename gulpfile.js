@@ -11,6 +11,10 @@ const paths = {
   styles: {
     src: 'src/styles/**/*.scss',
     dest: 'dist/styles'
+  },
+  scripts: {
+    src: 'src/scripts/**/*.js',
+    dest: 'dist/scripts'
   }
 };
 
@@ -35,20 +39,30 @@ function styles(done) {
     .pipe(gulp.dest(paths.styles.dest));
 }
 
+// Tarefa para minificar JavaScript
+function scripts() {
+  const terser = require('gulp-terser');
+  return gulp.src(paths.scripts.src)
+    .pipe(terser())
+    .pipe(gulp.dest(paths.scripts.dest));
+}
+
 // Tarefa para monitorar alterações nos arquivos
 function watchFiles() {
   gulp.watch(paths.images.src, images);
   gulp.watch(paths.styles.src, styles);
+  gulp.watch(paths.scripts.src, scripts);
 }
 
 // Tarefa padrão
 const build = gulp.series(
-  gulp.parallel(images, styles),
+  gulp.parallel(images, styles, scripts),
   watchFiles
 );
 
 // Exportar tarefas
 exports.images = images;
 exports.styles = styles;
+exports.scripts = scripts;
 exports.default = build;
 exports.watch = watchFiles;
